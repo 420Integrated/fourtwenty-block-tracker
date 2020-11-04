@@ -1,0 +1,58 @@
+{
+  "name": "fourtwenty-block-tracker",
+  "version": "4.4.3",
+  "description": "A block tracker for the 420coin blockchain. Keeps track of the latest block.",
+  "main": "src/polling.js",
+  "scripts": {
+    "lint": "eslint --ext .js .",
+    "test": "yarn build && yarn test:unit && yarn test:lint:deps",
+    "test:unit": "node test/index.js",
+    "test:lint:deps": "npx depcheck --ignore-dirs dist --ignores babelify,@babel/runtime,@babel/preset-env,@babel/plugin-transform-runtime",
+    "prepublishOnly": "yarn run build",
+    "build": "yarn build:clean && yarn build:es5 && yarn build:bundle && yarn build:validate",
+    "build:clean": "rm -rf ./dist && mkdir -p ./dist",
+    "build:es5": "babel ./src -d dist/es5/",
+    "build:bundle": "yarn build:bundle:polling && yarn build:bundle:base && yarn build:bundle:subscribe",
+    "build:bundle:polling": "browserify -s PollingBlockTracker -e src/polling.js -g babelify > dist/PollingBlockTracker.js",
+    "build:bundle:subscribe": "browserify -s SubscribeBlockTracker -e src/subscribe.js -g babelify > dist/SubscribeBlockTracker.js",
+    "build:bundle:base": "browserify -s BaseBlockTracker -e src/base.js -g babelify > dist/BaseBlockTracker.js",
+    "build:validate": "uglifyjs dist/es5/**.js > /dev/null"
+  },
+  "license": "MIT",
+  "resolutions": {
+    "ganache-core/**/elliptic": "^6.5.3",
+    "ganache-core/lodash": "^4.17.19"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "json-rpc-random-id": "^1.0.1",
+    "pify": "^3.0.0",
+    "safe-event-emitter": "^1.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-regenerator": "^7.4.5",
+    "@babel/preset-env": "^7.5.5",
+    "@metamask/eslint-config": "^3.0.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.5.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.1",
+    "ganache-core": "^2.7.0",
+    "tape": "^4.9.0",
+    "uglify-js": "^3.4.10"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MetaMask/fourtwenty-block-tracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MetaMask/fourtwenty-block-tracker/issues"
+  },
+  "homepage": "https://github.com/MetaMask/fourtwenty-block-tracker#readme"
+}
